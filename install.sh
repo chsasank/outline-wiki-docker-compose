@@ -10,7 +10,7 @@ if [ "$(uname)" == "Darwin" ]; then
     # https://unix.stackexchange.com/a/131940
     echo "sed commands here are tested only with GNU sed"
     echo "Installing gnu-sed"
-    # brew install gnu-sed
+    brew install gnu-sed
     alias sed=gsed
 fi
 
@@ -67,8 +67,9 @@ function create_env_files {
     env_replace SLACK_VERIFICATION_TOKEN $SLACK_VERIFICATION_TOKEN env.outline
 
     # Setup datastore
-    sed "s|outline-bucket|${BUCKET_NAME}|" -i nginx.conf
+    sed "s|outline-bucket|${BUCKET_NAME}|" -i data/nginx/default.conf
     mkdir -p data/minio_root/$BUCKET_NAME data/pgdata
+    rm -rf data/minio_root/.minio.sys
     MINIO_ACCESS_KEY=`openssl rand -hex 8`
     MINIO_SECRET_KEY=`openssl rand -hex 32`
 
@@ -84,6 +85,7 @@ function create_env_files {
 }
 
 function https_lets_encrypt {
-    
+    # TODO
+    echo "todo"
 }
-# create_env_files
+create_env_files
