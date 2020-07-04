@@ -68,7 +68,7 @@ function create_env_files {
 
     # Setup datastore
     sed "s|outline-bucket|${BUCKET_NAME}|" -i nginx.conf
-    mkdir -p minio_root/$BUCKET_NAME pgdata
+    mkdir -p data/minio_root/$BUCKET_NAME data/pgdata
     MINIO_ACCESS_KEY=`openssl rand -hex 8`
     MINIO_SECRET_KEY=`openssl rand -hex 32`
 
