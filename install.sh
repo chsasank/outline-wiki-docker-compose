@@ -54,7 +54,11 @@ function create_env_files {
     env_replace FORCE_HTTPS 'false' env.outline
 
     echo "=> Open https://api.slack.com/apps and Create New App"
-    echo "=> After creating, scroll down to 'App Credentials'"
+    echo "=> After creating, scroll down to 'Add features and functionality' -> 'Permissions'"
+    echo "=> 'http://${HOST}/auth/slack.callback'"
+    read -p "Copy the above to Redirect URLs. Press Enter to continue..."
+
+    echo "=> Save, go back and scroll down to 'App Credentials'"
 
     read -p "Enter App ID : " SLACK_APP_ID
     read -p "Enter Client ID : " SLACK_KEY
@@ -82,6 +86,8 @@ function create_env_files {
     env_replace AWS_SECRET_ACCESS_KEY $MINIO_SECRET_KEY env.outline
     env_replace AWS_S3_UPLOAD_BUCKET_NAME $BUCKET_NAME env.outline
     env_replace AWS_S3_UPLOAD_BUCKET_URL "http://${HOST}" env.outline
+
+    echo "=>run 'docker-compose up -d' and your server should be running shortly at http://${HOST}/"
 }
 
 function https_lets_encrypt {
