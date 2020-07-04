@@ -40,7 +40,6 @@ services:
       - 443:443
     volumes:
       - ./data/nginx/:/etc/nginx/conf.d/
-      - ./certs:/etc/ssl/private
     restart: always
     depends_on:
       - outline
