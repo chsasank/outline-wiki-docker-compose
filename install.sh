@@ -73,7 +73,7 @@ function create_env_files {
     # Setup datastore
     sed "s|outline-bucket|${BUCKET_NAME}|" -i data/nginx/default.conf
     mkdir -p data/minio_root/$BUCKET_NAME data/pgdata
-    rm -rf data/minio_root/.minio.sys
+    rm -rf data/minio_root/.minio.sys   # causes 401 if old keys exist
     MINIO_ACCESS_KEY=`openssl rand -hex 8`
     MINIO_SECRET_KEY=`openssl rand -hex 32`
 
@@ -87,7 +87,9 @@ function create_env_files {
     env_replace AWS_S3_UPLOAD_BUCKET_NAME $BUCKET_NAME env.outline
     env_replace AWS_S3_UPLOAD_BUCKET_URL "http://${HOST}" env.outline
 
-    echo "=>run 'docker-compose up -d' and your server should be running shortly at http://${HOST}/"
+    echo Removing old containers
+    docker-compose rm -fsv
+    echo "=>run 'docker-compose up -d' and your server should be ready shortly at http://${HOST}/"
 }
 
 function https_lets_encrypt {
