@@ -6,10 +6,10 @@ data/certs/private.key:
 
 .PHONY: clean install start
 
-configure: env.outline env.minio
+install: env.outline env.minio
 	@echo "=>run 'docker-compose up -d' and your server should be ready shortly."
 
-https: data/certs/private.key
+install-https: data/certs/private.key
 
 start: env.outline env.minio
 	docker-compose up
