@@ -127,6 +127,7 @@ function generate_starter_https_conf {
     ln -s https.conf.disabled default.conf
     popd
 
+    set -o allexport; source env.outline; set +o allexport
     read -p "Enter https port number [443]: " HTTPS_PORT
     HTTPS_PORT=${HTTPS_PORT:-443}
 
