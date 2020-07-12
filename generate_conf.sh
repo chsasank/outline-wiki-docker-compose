@@ -3,9 +3,6 @@
 set -e
 shopt -s expand_aliases
 
-HOST=${1:-localhost}
-BUCKET_NAME=${2:-outline-bucket}
-
 if [ "$(uname)" == "Darwin" ]; then
     if ! command -v gsed &> /dev/null
     then
@@ -40,6 +37,12 @@ function env_delete {
 }
 
 function create_env_files {
+    read -p "Enter hostname [localhost]: " HOST
+    HOST=${1:-localhost}
+
+    read -p "Enter bucket name to store images [outline-bucket]: " BUCKET_NAME
+    BUCKET_NAME=${2:-outline-bucket}
+
     # download latest sample env for outline 
     wget --quiet https://raw.githubusercontent.com/outline/outline/develop/.env.sample -O env.outline
 
@@ -112,33 +115,4 @@ function generate_dummy_https_conf {
     sed "s|http://|https://|" -i env.outline
 }
 
-# if test -f "env.outline"; then
-#     read -p "Configuration already generated. Do you want to regenerate it? [no]: " REGENERATE_CONF
-#     REGENERATE_CONF=${REGENERATE_CONF:-no}
-#     if [ $REGENERATE_CONF != 'no' ]
-#     then
-#         echo "Regenerating conf"
-#         create_env_files
-#     fi
-# else
-#     create_env_files
-# fi
-
-# read -p "Do you want to generate HTTPS conf? [yes]: " GENERATE_HTTPS
-# GENERATE_HTTPS=${GENERATE_HTTPS:-yes}
-
-# if [ $GENERATE_HTTPS == 'yes' ] && [ test -f "data/certs/private.key" ]
-# then
-#     read -p "HTTPS certificate already generated. Do you want to regenerate it? [no]: " GENERATE_HTTPS
-#     GENERATE_HTTPS=${GENERATE_HTTPS:-no}
-# fi
-
-# if [ $GENERATE_HTTPS != 'no' ]
-# then
-#     generate_dummy_https_conf
-# fi
-
-
-# https://stackoverflow.com/a/39914492/6212301
-# Allows to call a function based on arguments passed to the script
 $*
