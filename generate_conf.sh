@@ -46,16 +46,20 @@ function create_slack_env {
 
     echo "=> Save, go back and scroll down to 'App Credentials'"
 
-    read -p "Enter App ID : " SLACK_APP_ID
-    read -p "Enter Client ID : " SLACK_KEY
-    read -p "Enter Client Secret : " SLACK_SECRET
-    read -p "Enter Verification Token (*not* Signing Secret): " SLACK_VERIFICATION_TOKEN
+    if test -f env.slack; then
+        set -o allexport; source env.slack; set +o allexport
+    fi
+
+    read -p "Enter App ID [$SLACK_APP_ID] : " SLACK_APP_ID_INP
+    read -p "Enter Client ID [$SLACK_KEY] : " SLACK_KEY_INP
+    read -p "Enter Client Secret [$SLACK_SECRET]: " SLACK_SECRET_INP
+    read -p "Enter Verification Token (*not* Signing Secret) [$SLACK_VERIFICATION_TOKEN]: " SLACK_VERIFICATION_TOKEN_INP
 
     touch env.slack
-    env_add SLACK_APP_ID $SLACK_APP_ID env.slack
-    env_add SLACK_KEY $SLACK_KEY env.slack
-    env_add SLACK_SECRET $SLACK_SECRET env.slack
-    env_add SLACK_VERIFICATION_TOKEN $SLACK_VERIFICATION_TOKEN env.slack
+    env_add SLACK_APP_ID ${SLACK_APP_ID_INP:-SLACK_APP_ID} env.slack
+    env_add SLACK_KEY ${SLACK_KEY_INP:-SLACK_KEY} env.slack
+    env_add SLACK_SECRET ${SLACK_SECRET_INP:-SLACK_SECRET} env.slack
+    env_add SLACK_VERIFICATION_TOKEN ${SLACK_VERIFICATION_TOKEN_INP:-SLACK_VERIFICATION_TOKEN} env.slack
 }
 
 function create_env_files {

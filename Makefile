@@ -36,6 +36,7 @@ clean-docker: stop
 
 clean-conf:
 	rm -rfv data/certs/* env.*
+	rm -rf data/minio_root/.minio.sys/
 
 clean-data:
 	@bash generate_conf.sh delete_data
