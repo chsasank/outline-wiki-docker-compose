@@ -84,7 +84,8 @@ function create_env_files {
     env_replace FORCE_HTTPS 'false' env.outline
 
     # Setup datastore
-    sed "s|outline-bucket|${BUCKET_NAME}|" -i data/nginx/default.conf
+    sed "s|outline-bucket|${BUCKET_NAME}|" -i data/nginx/http.conf.disabled
+    sed "s|outline-bucket|${BUCKET_NAME}|" -i data/nginx/https.conf.disabled
     MINIO_ACCESS_KEY=`openssl rand -hex 8`
     MINIO_SECRET_KEY=`openssl rand -hex 32`
 

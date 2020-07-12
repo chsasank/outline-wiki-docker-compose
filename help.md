@@ -30,3 +30,6 @@ If you want to rerun install script, run `git clean -ffdx` to clear all the data
 
 # s3 help
 https://docs.aws.amazon.com/AmazonS3/latest/dev/cors.html
+
+
+# Awesome make file!
