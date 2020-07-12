@@ -21,8 +21,6 @@ services:
     restart: always
     volumes:
       - ./data/certs:/root/.minio/certs
-    ports:
-      - 9000:9000
   outline:
     # TODO: remove hardcoded version
     image: outlinewiki/outline:version-0.43.3

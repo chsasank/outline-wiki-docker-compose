@@ -7,11 +7,15 @@ HOST=${1:-localhost}
 BUCKET_NAME=${2:-outline-bucket}
 
 if [ "$(uname)" == "Darwin" ]; then
-    # https://unix.stackexchange.com/a/131940
-    echo "sed commands here are tested only with GNU sed"
-    echo "Installing gnu-sed"
-    brew install gnu-sed
-    alias sed=gsed
+    if ! command -v gsed &> /dev/null
+    then
+        # https://unix.stackexchange.com/a/131940
+        echo "sed commands here are tested only with GNU sed"
+        echo "Installing gnu-sed"
+        brew install gnu-sed
+    else
+        alias sed=gsed
+    fi
 fi
 
 function env_add {
@@ -86,13 +90,10 @@ function create_env_files {
     env_replace AWS_SECRET_ACCESS_KEY $MINIO_SECRET_KEY env.outline
     env_replace AWS_S3_UPLOAD_BUCKET_NAME $BUCKET_NAME env.outline
     env_replace AWS_S3_UPLOAD_BUCKET_URL "http://${HOST}" env.outline
-
-    echo Removing old containers
-    docker-compose rm -fsv
-    echo "=>run 'docker-compose up -d' and your server should be ready shortly at http://${HOST}/"
 }
 
 function generate_dummy_https_conf {
+    echo "Generating HTTPS configuration"
     # https://letsencrypt.org/docs/certificates-for-localhost/
     openssl req -x509 -out data/certs/public.crt -keyout data/certs/private.key \
         -newkey rsa:2048 -nodes -sha256 \
@@ -111,4 +112,33 @@ function generate_dummy_https_conf {
     sed "s|http://|https://|" -i env.outline
 }
 
-generate_dummy_https_conf
+# if test -f "env.outline"; then
+#     read -p "Configuration already generated. Do you want to regenerate it? [no]: " REGENERATE_CONF
+#     REGENERATE_CONF=${REGENERATE_CONF:-no}
+#     if [ $REGENERATE_CONF != 'no' ]
+#     then
+#         echo "Regenerating conf"
+#         create_env_files
+#     fi
+# else
+#     create_env_files
+# fi
+
+# read -p "Do you want to generate HTTPS conf? [yes]: " GENERATE_HTTPS
+# GENERATE_HTTPS=${GENERATE_HTTPS:-yes}
+
+# if [ $GENERATE_HTTPS == 'yes' ] && [ test -f "data/certs/private.key" ]
+# then
+#     read -p "HTTPS certificate already generated. Do you want to regenerate it? [no]: " GENERATE_HTTPS
+#     GENERATE_HTTPS=${GENERATE_HTTPS:-no}
+# fi
+
+# if [ $GENERATE_HTTPS != 'no' ]
+# then
+#     generate_dummy_https_conf
+# fi
+
+
+# https://stackoverflow.com/a/39914492/6212301
+# Allows to call a function based on arguments passed to the script
+$*
