@@ -42,8 +42,8 @@ services:
   nginx:
     image: nginx
     ports:
-      - 80:80
-      - 443:443
+      - 8888:80
+      - 4443:443
     volumes:
       - ./data/nginx/:/etc/nginx/conf.d/
       - ./data/certs/:/etc/ssl/certs/

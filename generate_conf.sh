@@ -33,7 +33,7 @@ function env_replace {
 function env_delete {
     key=$1
     filename=$2
-    sed "/${key}/d" -i env.outline 
+    sed "/${key}/d" -i env.outline
 }
 
 function create_slack_env {
@@ -62,12 +62,27 @@ function create_env_files {
     read -p "Enter hostname [localhost]: " HOST
     HOST=${HOST:-localhost}
 
+    read -p "Enter http port number [80]: " HTTP_PORT
+    HTTP_PORT=${HTTP_PORT:-80}
+
+    if [ $HTTP_PORT == 80 ]
+    then
+        URL="http://${HOST}"
+    else
+        URL="http://${HOST}:{HTTP_PORT}"
+    fi
+
+    sed "s|8888:80|${HTTP_PORT}:80|" -i docker-compose.yml
+
     # TODO: Allow configuration of portnumber
     read -p "Enter bucket name to store images [outline-bucket]: " BUCKET_NAME
     BUCKET_NAME=${BUCKET_NAME:-outline-bucket}
 
-    # download latest sample env for outline 
+    # download latest sample env for outline
     wget --quiet https://raw.githubusercontent.com/outline/outline/develop/.env.sample -O env.outline
+
+    env_replace URL $URL env.outline
+    env_add HTTP_PORT $HTTP_PORT env.outline
 
     SECRET_KEY=`openssl rand -hex 32`
     UTILS_SECRET=`openssl rand -hex 32`
@@ -79,7 +94,6 @@ function create_env_files {
     env_delete DATABASE_URL_TEST
     env_delete REDIS_URL
 
-    env_replace URL "http://${HOST}" env.outline
     env_replace PORT 3000 env.outline
     env_replace FORCE_HTTPS 'false' env.outline
 
@@ -97,7 +111,7 @@ function create_env_files {
     env_replace AWS_ACCESS_KEY_ID $MINIO_ACCESS_KEY env.outline
     env_replace AWS_SECRET_ACCESS_KEY $MINIO_SECRET_KEY env.outline
     env_replace AWS_S3_UPLOAD_BUCKET_NAME $BUCKET_NAME env.outline
-    env_replace AWS_S3_UPLOAD_BUCKET_URL "http://${HOST}" env.outline
+    env_replace AWS_S3_UPLOAD_BUCKET_URL $URL env.outline
 }
 
 function generate_starter_https_conf {
@@ -113,8 +127,22 @@ function generate_starter_https_conf {
     ln -s https.conf.disabled default.conf
     popd
 
+    read -p "Enter https port number [443]: " HTTPS_PORT
+    HTTPS_PORT=${HTTPS_PORT:-443}
+
+    if [ $HTTPS_PORT == 443 ]
+    then
+        URL="https://${HOST}"
+    else
+        URL="https://${HOST}:{HTTPS_PORT}"
+    fi
+
+    sed "s|4443:443|${HTTPS_PORT}:443|" -i docker-compose.yml
+
     env_replace FORCE_HTTPS 'true' env.outline
-    sed "s|http://|https://|" -i env.outline
+    env_add HTTPS_PORT $HTTPS_PORT env.outline
+    env_replace URL $URL env.outline
+    env_replace AWS_S3_UPLOAD_BUCKET_URL $URL env.outline
 }
 
 function delete_data {
