@@ -36,12 +36,35 @@ function env_delete {
     sed "/${key}/d" -i env.outline 
 }
 
+function create_slack_env {
+    # get url from outline env
+    set -o allexport; source env.outline; set +o allexport
+    echo "=> Open https://api.slack.com/apps and Create New App"
+    echo "=> After creating, scroll down to 'Add features and functionality' -> 'Permissions'"
+    echo "=> '${URL}/auth/slack.callback'"
+    read -p "Copy the above to Redirect URLs. Press Enter to continue..."
+
+    echo "=> Save, go back and scroll down to 'App Credentials'"
+
+    read -p "Enter App ID : " SLACK_APP_ID
+    read -p "Enter Client ID : " SLACK_KEY
+    read -p "Enter Client Secret : " SLACK_SECRET
+    read -p "Enter Verification Token (*not* Signing Secret): " SLACK_VERIFICATION_TOKEN
+
+    touch env.slack
+    env_add SLACK_APP_ID $SLACK_APP_ID env.slack
+    env_add SLACK_KEY $SLACK_KEY env.slack
+    env_add SLACK_SECRET $SLACK_SECRET env.slack
+    env_add SLACK_VERIFICATION_TOKEN $SLACK_VERIFICATION_TOKEN env.slack
+}
+
 function create_env_files {
     read -p "Enter hostname [localhost]: " HOST
-    HOST=${1:-localhost}
+    HOST=${HOST:-localhost}
 
+    # TODO: Allow configuration of portnumber
     read -p "Enter bucket name to store images [outline-bucket]: " BUCKET_NAME
-    BUCKET_NAME=${2:-outline-bucket}
+    BUCKET_NAME=${BUCKET_NAME:-outline-bucket}
 
     # download latest sample env for outline 
     wget --quiet https://raw.githubusercontent.com/outline/outline/develop/.env.sample -O env.outline
@@ -59,23 +82,6 @@ function create_env_files {
     env_replace URL "http://${HOST}" env.outline
     env_replace PORT 3000 env.outline
     env_replace FORCE_HTTPS 'false' env.outline
-
-    echo "=> Open https://api.slack.com/apps and Create New App"
-    echo "=> After creating, scroll down to 'Add features and functionality' -> 'Permissions'"
-    echo "=> 'http://${HOST}/auth/slack.callback'"
-    read -p "Copy the above to Redirect URLs. Press Enter to continue..."
-
-    echo "=> Save, go back and scroll down to 'App Credentials'"
-
-    read -p "Enter App ID : " SLACK_APP_ID
-    read -p "Enter Client ID : " SLACK_KEY
-    read -p "Enter Client Secret : " SLACK_SECRET
-    read -p "Enter Verification Token (*not* Signing Secret): " SLACK_VERIFICATION_TOKEN
-
-    env_replace SLACK_APP_ID $SLACK_APP_ID env.outline
-    env_replace SLACK_KEY $SLACK_KEY env.outline
-    env_replace SLACK_SECRET $SLACK_SECRET env.outline
-    env_replace SLACK_VERIFICATION_TOKEN $SLACK_VERIFICATION_TOKEN env.outline
 
     # Setup datastore
     sed "s|outline-bucket|${BUCKET_NAME}|" -i data/nginx/default.conf
@@ -95,16 +101,13 @@ function create_env_files {
     env_replace AWS_S3_UPLOAD_BUCKET_URL "http://${HOST}" env.outline
 }
 
-function generate_dummy_https_conf {
+function generate_starter_https_conf {
     echo "Generating HTTPS configuration"
     # https://letsencrypt.org/docs/certificates-for-localhost/
     openssl req -x509 -out data/certs/public.crt -keyout data/certs/private.key \
         -newkey rsa:2048 -nodes -sha256 \
         -subj '/CN=localhost' -extensions EXT -config <( \
         printf "[dn]\nCN=localhost\n[req]\ndistinguished_name = dn\n[EXT]\nsubjectAltName=DNS:localhost\nkeyUsage=digitalSignature\nextendedKeyUsage=serverAuth")
-
-    # https://www.digitalocean.com/community/tutorials/how-to-create-a-self-signed-ssl-certificate-for-nginx-on-centos-7#step-3-configure-nginx-to-use-ssl
-    # openssl dhparam -out data/certs/dhparam.pem 2048
 
     pushd data/nginx
     rm -f default.conf
@@ -113,6 +116,16 @@ function generate_dummy_https_conf {
 
     env_replace FORCE_HTTPS 'true' env.outline
     sed "s|http://|https://|" -i env.outline
+}
+
+function delete_data {
+    read -p "Do you want to delete your database and images [no]: " DELETE_DB
+	DELETE_DB=${DELETE_DB:-no};
+	if [ $DELETE_DB == "yes" ]
+	then
+        echo "deleting database and images"
+		rm -rfv data/pgdata data/minio_root
+	fi
 }
 
 $*

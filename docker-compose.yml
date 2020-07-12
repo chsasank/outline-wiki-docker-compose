@@ -21,6 +21,8 @@ services:
     restart: always
     volumes:
       - ./data/certs:/root/.minio/certs
+    ports:
+      - 9000:9000
   outline:
     # TODO: remove hardcoded version
     image: outlinewiki/outline:version-0.43.3
@@ -30,7 +32,9 @@ services:
       - DATABASE_URL=postgres://user:pass@postgres:5432/outline
       - DATABASE_URL_TEST=postgres://user:pass@postgres:5432/outline-test
       - REDIS_URL=redis://redis:6379
-    env_file: ./env.outline
+    env_file:
+      - ./env.outline
+      - ./env.slack
     restart: always
     depends_on:
       - postgres
