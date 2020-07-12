@@ -82,6 +82,7 @@ function create_env_files {
     wget --quiet https://raw.githubusercontent.com/outline/outline/develop/.env.sample -O env.outline
 
     env_replace URL $URL env.outline
+    env_add HOST $HOST env.outline
     env_add HTTP_PORT $HTTP_PORT env.outline
 
     SECRET_KEY=`openssl rand -hex 32`
