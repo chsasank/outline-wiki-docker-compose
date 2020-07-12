@@ -69,7 +69,7 @@ function create_env_files {
     then
         URL="http://${HOST}"
     else
-        URL="http://${HOST}:{HTTP_PORT}"
+        URL="http://${HOST}:${HTTP_PORT}"
     fi
 
     sed "s|8888:80|${HTTP_PORT}:80|" -i docker-compose.yml
@@ -134,7 +134,7 @@ function generate_starter_https_conf {
     then
         URL="https://${HOST}"
     else
-        URL="https://${HOST}:{HTTPS_PORT}"
+        URL="https://${HOST}:${HTTPS_PORT}"
     fi
 
     sed "s|4443:443|${HTTPS_PORT}:443|" -i docker-compose.yml
