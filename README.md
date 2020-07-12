@@ -1,5 +1,6 @@
 # Docker compose for outline wiki
 
+http://chsasank.github.io/outline-self-hosted-wiki.html
 
 Features:
 
@@ -9,6 +10,16 @@ Features:
 * Use minio instead of AWS S3, so that everything is really self-hosted
 * nginx reverse proxy for outline and minio
 
-Runs the outline server on 80 and 443. 
+Runs the outline server with https if required
 
-Want to change the ports? Change ports in docker-compose.yml
+# How to use 
+
+```
+git clone https://github.com/chsasank/outline-wiki-docker-compose.git
+cd outline-wiki-docker-compose
+make install
+```
+
+And follow the instructions.
+
+![make_install](http://chsasank.github.io/assets/images/outline/make_install.png)
