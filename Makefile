@@ -7,4 +7,4 @@ start:
 .PHONY: clean
 
 clean:
-	docker-compose rm -fsv && rm -rfv data/pgdata data/minio_root/.minio.sys
+	rm -rfv data/pgdata data/minio_root/.minio.sys && docker-compose rm -fsv

@@ -92,8 +92,23 @@ function create_env_files {
     echo "=>run 'docker-compose up -d' and your server should be ready shortly at http://${HOST}/"
 }
 
-function https_lets_encrypt {
-    # TODO
-    echo "todo"
+function generate_dummy_https_conf {
+    # https://letsencrypt.org/docs/certificates-for-localhost/
+    openssl req -x509 -out data/certs/public.crt -keyout data/certs/private.key \
+        -newkey rsa:2048 -nodes -sha256 \
+        -subj '/CN=localhost' -extensions EXT -config <( \
+        printf "[dn]\nCN=localhost\n[req]\ndistinguished_name = dn\n[EXT]\nsubjectAltName=DNS:localhost\nkeyUsage=digitalSignature\nextendedKeyUsage=serverAuth")
+
+    # https://www.digitalocean.com/community/tutorials/how-to-create-a-self-signed-ssl-certificate-for-nginx-on-centos-7#step-3-configure-nginx-to-use-ssl
+    # openssl dhparam -out data/certs/dhparam.pem 2048
+
+    pushd data/nginx
+    rm -f default.conf
+    ln -s https.conf.disabled default.conf
+    popd
+
+    env_replace FORCE_HTTPS 'true' env.outline
+    sed "s|http://|https://|" -i env.outline
 }
-create_env_files
+
+generate_dummy_https_conf

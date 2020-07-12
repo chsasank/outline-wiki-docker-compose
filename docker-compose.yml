@@ -19,10 +19,15 @@ services:
     command: "minio server /minio_root"
     env_file: ./env.minio
     restart: always
+    volumes:
+      - ./data/certs:/root/.minio/certs
+    ports:
+      - 9000:9000
   outline:
     # TODO: remove hardcoded version
     image: outlinewiki/outline:version-0.43.3
-    command: sh -c "yarn build && yarn sequelize db:migrate && yarn start"
+    # command: sh -c "yarn build && yarn sequelize db:migrate && yarn start"
+    command: sh -c "yarn sequelize db:migrate && yarn dev"
     environment:
       - DATABASE_URL=postgres://user:pass@postgres:5432/outline
       - DATABASE_URL_TEST=postgres://user:pass@postgres:5432/outline-test
@@ -40,6 +45,7 @@ services:
       - 443:443
     volumes:
       - ./data/nginx/:/etc/nginx/conf.d/
+      - ./data/certs/:/etc/ssl/certs/
     restart: always
     depends_on:
       - outline
