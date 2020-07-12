@@ -85,8 +85,6 @@ function create_env_files {
 
     # Setup datastore
     sed "s|outline-bucket|${BUCKET_NAME}|" -i data/nginx/default.conf
-    mkdir -p data/minio_root/$BUCKET_NAME data/pgdata
-    rm -rf data/minio_root/.minio.sys   # causes 401 if old keys exist
     MINIO_ACCESS_KEY=`openssl rand -hex 8`
     MINIO_SECRET_KEY=`openssl rand -hex 32`
 
@@ -126,6 +124,12 @@ function delete_data {
         echo "deleting database and images"
 		rm -rfv data/pgdata data/minio_root
 	fi
+}
+
+function init_data_dirs {
+    # get url from outline env
+    set -o allexport; source env.outline; set +o allexport
+    mkdir -p data/minio_root/${AWS_S3_UPLOAD_BUCKET_NAME} data/pgdata
 }
 
 $*

@@ -16,10 +16,13 @@ env.slack: env.outline
 https: data/certs/private.key
 	@echo "=>run 'make start' and your server should be ready shortly."
 
-install: env.outline env.minio env.slack
+init-data-dirs: env.outline
+	@bash generate_conf.sh init_data_dirs
+
+install: env.outline env.minio env.slack init-data-dirs
 	@echo "=>run 'make start' and your server should be ready shortly."
 
-start: env.outline env.minio env.slack
+start: install
 	docker-compose up -d
 
 logs:

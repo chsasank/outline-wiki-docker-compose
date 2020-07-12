@@ -16,11 +16,10 @@ services:
     image: minio/minio
     volumes:
       - ./data/minio_root:/minio_root
+      - ./data/certs:/root/.minio/certs
     command: "minio server /minio_root"
     env_file: ./env.minio
     restart: always
-    volumes:
-      - ./data/certs:/root/.minio/certs
     ports:
       - 9000:9000
   outline:
