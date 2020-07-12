@@ -12,10 +12,16 @@ install: env.outline env.minio
 install-https: data/certs/private.key
 
 start: env.outline env.minio
-	docker-compose up
+	docker-compose up -d
+
+logs:
+	docker-compose logs -f
+
+stop:
+	docker-compose down
 
 clean-docker:
-	docker-compose rm -fsv
+	docker-compose rm -fsv || true
 
 clean-conf:
 	rm -rfv data/certs/* env.*
