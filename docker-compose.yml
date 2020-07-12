@@ -20,8 +20,6 @@ services:
     command: "minio server /minio_root"
     env_file: ./env.minio
     restart: always
-    ports:
-      - 9000:9000
   outline:
     # TODO: remove hardcoded version
     image: outlinewiki/outline:version-0.43.3
