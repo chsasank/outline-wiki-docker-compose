@@ -21,8 +21,7 @@ services:
     env_file: ./env.minio
     restart: always
   outline:
-    # TODO: remove hardcoded version
-    image: outlinewiki/outline:version-0.45.0
+    image: outlinewiki/outline:latest
     command: sh -c "yarn build && yarn sequelize db:migrate && yarn start"
     environment:
       - DATABASE_URL=postgres://user:pass@postgres:5432/outline
