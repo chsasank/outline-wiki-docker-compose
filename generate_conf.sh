@@ -101,6 +101,9 @@ function create_env_files {
 
     env_replace PORT 3000 env.outline
     env_replace FORCE_HTTPS 'false' env.outline
+    
+    # Disable SSL for PostgreSQL: https://github.com/outline/outline/issues/1501
+    env_add PGSSLMODE disable env.outline
 
     # Setup datastore
     sed "s|outline-bucket|${BUCKET_NAME}|" -i data/nginx/http.conf.disabled
