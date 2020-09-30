@@ -22,7 +22,7 @@ services:
     restart: always
   outline:
     image: outlinewiki/outline:latest
-    command: sh -c "yarn build && yarn sequelize db:migrate && yarn start"
+    command: sh -c "yarn sequelize:migrate --env production-ssl-disabled && yarn start"
     environment:
       - DATABASE_URL=postgres://user:pass@postgres:5432/outline
       - DATABASE_URL_TEST=postgres://user:pass@postgres:5432/outline-test
