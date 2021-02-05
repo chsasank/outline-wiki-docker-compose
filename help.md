@@ -22,12 +22,6 @@ If you want to rerun install script, run `git clean -ffdx` to clear all the data
 
 - Are you sure there's a directory `data/minio_root/outline-bucket`
 
-
-### Not tested for *HTTPS*!
-
-- Minio cause lot of issues with https! Better use fakes3 for self-hosted
-
-
 # s3 help
 https://docs.aws.amazon.com/AmazonS3/latest/dev/cors.html
 
