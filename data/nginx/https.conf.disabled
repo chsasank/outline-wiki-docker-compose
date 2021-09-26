@@ -35,6 +35,10 @@ server {
 
     client_max_body_size 100m;
 
+    location /.well-known/acme-challenge/ {
+        root /var/www/certbot;
+    }
+
     # Proxy requests to the bucket "outline" to MinIO server running on port 9000
     location /outline-bucket {
         include /etc/nginx/conf.d/include/proxy.conf;
