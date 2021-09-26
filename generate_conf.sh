@@ -173,4 +173,14 @@ function init_data_dirs {
     mkdir -p data/minio_root/${AWS_S3_UPLOAD_BUCKET_NAME} data/pgdata
 }
 
+function gen_https_cert {
+    # get url from outline env
+    set -o allexport; source env.outline; set +o allexport
+    docker-compose run --rm --entrypoint "certbot certonly --webroot -w /var/www/certbot --agree-tos --force-renewal --cert-name main_cert -d ${HOST}" certbot
+    rm data/certs/public.crt
+    rm data/certs/private.key
+    ln -s data/certbot/conf/live/main_cert/fullchain.pem data/certs/public.crt 
+    ln -s data/certbot/conf/live/main_cert/privkey.pem data/certs/private.key
+}
+
 $*
