@@ -42,3 +42,6 @@ clean-data:
 	@bash generate_conf.sh delete_data
 
 clean: clean-docker clean-conf
+
+gen-https-cert: install https
+	@bash generate_conf.sh gen_https_cert

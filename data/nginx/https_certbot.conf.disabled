@@ -3,8 +3,8 @@ server {
     listen 443 http2 ssl;
     listen [::]:443 http2 ssl;
 
-    ssl_certificate /etc/ssl/certs/public.crt;
-    ssl_certificate_key /etc/ssl/certs/private.key;
+    ssl_certificate /etc/letsencrypt/live/main_cert/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/main_cert/privkey.pem;
     ssl_dhparam /etc/ssl/certs/dhparam.pem;
 
     ########################################################################
