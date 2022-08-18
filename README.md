@@ -23,3 +23,7 @@ make install
 And follow the instructions.
 
 ![make_install](http://chsasank.github.io/assets/images/outline/make_install.png)
+
+### Infrastructure model
+
+![Infrastructure model](.infragenie/infrastructure_model.png)
