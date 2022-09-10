@@ -1,6 +1,23 @@
+
 server {
   listen        80;
   client_max_body_size 100m;
+
+  location /realtime/ {
+    proxy_pass http://outline:3000;
+    proxy_set_header Upgrade $http_upgrade;
+    proxy_set_header Connection "Upgrade";
+    proxy_set_header Host $host;
+  }
+
+  location /collaboration/ {
+    proxy_pass http://outline:3000;
+    proxy_http_version 1.1;
+    proxy_set_header Upgrade $http_upgrade;
+    proxy_set_header Connection "Upgrade";
+    proxy_set_header Host $host;
+  }
+
 
   # Proxy requests to the bucket "outline" to MinIO server running on port 9000
   location /outline-bucket {
@@ -14,3 +31,7 @@ server {
     proxy_pass http://outline:3000;
   }
 }
+
+
+
+
